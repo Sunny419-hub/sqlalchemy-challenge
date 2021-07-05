@@ -149,7 +149,7 @@ def startend(start, end):
         start_end_dict["avg"] = avg
         start_end_dict["maxi"] = maxi
         start_end_dict["mini"] = mini
-        all_start_end.append(start_dict)
+        all_start_end.append(start_end_dict)
 
     return jsonify(all_start_end)
 
