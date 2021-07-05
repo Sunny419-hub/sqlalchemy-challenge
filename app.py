@@ -51,7 +51,8 @@ def names():
 
     
     # Query all date and PRCP
-    results = session.query(Measurement.date, Measurement.prcp).all()
+    measurement = Base.classes.measurement
+    results = session.query(measurement.date, measurement.prcp).all()
 
     session.close()
 
@@ -64,7 +65,20 @@ def names():
         all_precipitation.append(prcp_dict)
 
     return jsonify(all_precipitation)
+
+@app.route("/api/v1.0/stations")
+def stations():
+    # Create our session (link) from Python to the DB
+    session = Session(engine)
+
     
+    # Query stations
+    station = Base.classes.station
+    results = session.query(station.station).all()
+
+    session.close()
+
+
    
 @app.route("/api/v1.0/passengers")
 def passengers():
