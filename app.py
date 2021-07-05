@@ -45,7 +45,7 @@ def welcome():
 
 
 @app.route("/api/v1.0/precipitation")
-def names():
+def precipitation():
     
     # Create our session (link) from Python to the DB
     session = Session(engine)
@@ -84,7 +84,7 @@ def stations():
 
 
 @app.route("/api/v1.0/tobs")
-def names():
+def tobs():
     
     # Create our session (link) from Python to the DB
     session = Session(engine)
@@ -103,27 +103,30 @@ def names():
     return jsonify(results)
     
 
-@app.route("/api/v1.0/passengers")
-def passengers():
+@app.route("/api/v1.0/<start>")
+def start(start):
     # Create our session (link) from Python to the DB
     session = Session(engine)
-
-    """Return a list of passenger data including the name, age, and sex of each passenger"""
+    
     # Query all passengers
-    results = session.query(Passenger.name, Passenger.age, Passenger.sex).all()
-
+    most_active_station = session.query( 
+                            func.avg(measurement.tobs), 
+                            func.max(measurement.tobs), 
+                            func.min(measurement.tobs)).\
+                    filter(measurement.date >= start).all()
+    
     session.close()
 
     # Create a dictionary from the row data and append to a list of all_passengers
-    all_passengers = []
-    for name, age, sex in results:
-        passenger_dict = {}
-        passenger_dict["name"] = name
-        passenger_dict["age"] = age
-        passenger_dict["sex"] = sex
-        all_passengers.append(passenger_dict)
+    all_start = []
+    for avg, maxi, mini in results:
+        start_dict = {}
+        start_dict["avg"] = avg
+        start_dict["maxi"] = maxi
+        start_dict["mini"] = mini
+        all_start.append(start_dict)
 
-    return jsonify(all_passengers)
+    return jsonify(all_start)
 
 
 if __name__ == '__main__':
