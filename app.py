@@ -55,15 +55,15 @@ def names():
 
     session.close()
 
-    # """Convert the query results to a dictionary using date as the key and prcp as the value"""
+    # Convert the query results to a dictionary using date as the key and prcp as the value
    
-    all_dates = []
+    all_precipitation = []
     for date, prcp in results:
         prcp_dict = {}
         prcp_dict[date] = prcp
-        all_dates.append(prcp_dict)
+        all_precipitation.append(prcp_dict)
 
-    return jsonify(all_dates)
+    return jsonify(all_precipitation)
     
    
 @app.route("/api/v1.0/passengers")
