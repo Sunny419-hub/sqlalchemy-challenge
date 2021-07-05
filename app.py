@@ -77,7 +77,7 @@ def stations():
     results = session.query(station.station).all()
 
     session.close()
-
+    return jsonify(results)
 
    
 @app.route("/api/v1.0/passengers")
