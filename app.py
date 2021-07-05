@@ -46,6 +46,7 @@ def welcome():
 
 @app.route("/api/v1.0/precipitation")
 def names():
+    
     # Create our session (link) from Python to the DB
     session = Session(engine)
 
@@ -67,7 +68,9 @@ def names():
     return jsonify(all_precipitation)
 
 @app.route("/api/v1.0/stations")
+
 def stations():
+    
     # Create our session (link) from Python to the DB
     session = Session(engine)
 
@@ -79,7 +82,27 @@ def stations():
     session.close()
     return jsonify(results)
 
-   
+
+@app.route("/api/v1.0/tobs")
+def names():
+    
+    # Create our session (link) from Python to the DB
+    session = Session(engine)
+
+    
+    # Query all date and PRCP
+    measurement = Base.classes.measurement
+    results = session.query(measurement.tobs).\
+    # Query the last 12 months of temperature observation data for this station
+    year_ago = dt.date(2017,8,18) - dt.timedelta(days=365)
+    results = session.query(measurement).\
+        filter(measurement.date >= year_ago).\
+        filter(measurement.station == "USC00519281").statement
+     
+    session.close()
+    return jsonify(results)
+    
+
 @app.route("/api/v1.0/passengers")
 def passengers():
     # Create our session (link) from Python to the DB
