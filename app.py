@@ -131,8 +131,10 @@ def startend(start, end):
     # Create our session (link) from Python to the DB
     session = Session(engine)
     
+    measurement = Base.classes.measurement
+    
     # Query all passengers
-    most_active_station = session.query( 
+    results = session.query( 
                             func.avg(measurement.tobs), 
                             func.max(measurement.tobs), 
                             func.min(measurement.tobs)).\
