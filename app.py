@@ -87,9 +87,9 @@ def tobs():
     # Create our session (link) from Python to the DB
     session = Session(engine)
 
-    
-    # Query all date and PRCP
+    # Query tobs
     measurement = Base.classes.measurement
+    
     # Query the last 12 months of temperature observation data for this station
     year_ago = dt.date(2017,8,18) - dt.timedelta(days=365)
     results = session.query(measurement.tobs).\
@@ -105,11 +105,13 @@ def start(start):
     # Create our session (link) from Python to the DB
     session = Session(engine)
     
-    # Query all passengers
-    most_active_station = session.query( 
+    measurement = Base.classes.measurement
+    
+    # Query start date
+    results = session.query( 
                             func.avg(measurement.tobs), 
-                            func.maxi(measurement.tobs), 
-                            func.mini(measurement.tobs)).\
+                            func.max(measurement.tobs), 
+                            func.min(measurement.tobs)).\
                     filter(measurement.date >= start).all()
     session.close()
 
@@ -132,8 +134,8 @@ def startend(start, end):
     # Query all passengers
     most_active_station = session.query( 
                             func.avg(measurement.tobs), 
-                            func.maxi(measurement.tobs), 
-                            func.mini(measurement.tobs)).\
+                            func.max(measurement.tobs), 
+                            func.min(measurement.tobs)).\
                             filter(measurement.date >= start).filter(measurement.date <= end).all()
     
     session.close()
