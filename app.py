@@ -1,5 +1,5 @@
 import numpy as np
-
+import datetime as dt
 import sqlalchemy
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
@@ -18,8 +18,6 @@ Base = automap_base()
 # reflect the tables
 Base.prepare(engine, reflect=True)
 
-# Save reference to the table
-Passenger = Base.classes.passenger
 
 #################################################
 # Flask Setup
@@ -39,8 +37,8 @@ def welcome():
         f"/api/v1.0/precipitation<br/>"
         f"/api/v1.0/stations<br/>"
         f"/api/v1.0/tobs<br/>"
-        f"/api/v1.0/<start><br/>"
-        f"/api/v1.0/<start>/<end><br/>"
+        f"/api/v1.0/start<br/>"
+        f"/api/v1.0/start/end<br/>"
     )
 
 
@@ -92,12 +90,11 @@ def tobs():
     
     # Query all date and PRCP
     measurement = Base.classes.measurement
-    results = session.query(measurement.tobs).\
     # Query the last 12 months of temperature observation data for this station
     year_ago = dt.date(2017,8,18) - dt.timedelta(days=365)
-    results = session.query(measurement).\
+    results = session.query(measurement.tobs).\
         filter(measurement.date >= year_ago).\
-        filter(measurement.station == "USC00519281").statement
+        filter(measurement.station == "USC00519281").all()
      
     session.close()
     return jsonify(results)
@@ -128,7 +125,7 @@ def start(start):
     return jsonify(all_start)
 
 @app.route("/api/v1.0/<start>/<end>")
-def start(start, end):
+def startend(start, end):
     # Create our session (link) from Python to the DB
     session = Session(engine)
     
