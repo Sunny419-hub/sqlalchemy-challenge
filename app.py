@@ -111,10 +111,9 @@ def start(start):
     # Query all passengers
     most_active_station = session.query( 
                             func.avg(measurement.tobs), 
-                            func.max(measurement.tobs), 
-                            func.min(measurement.tobs)).\
+                            func.maxi(measurement.tobs), 
+                            func.mini(measurement.tobs)).\
                     filter(measurement.date >= start).all()
-    
     session.close()
 
     # Create a dictionary from the row data and append to a list of all_passengers
@@ -128,6 +127,30 @@ def start(start):
 
     return jsonify(all_start)
 
+@app.route("/api/v1.0/<start>/<end>")
+def start(start, end):
+    # Create our session (link) from Python to the DB
+    session = Session(engine)
+    
+    # Query all passengers
+    most_active_station = session.query( 
+                            func.avg(measurement.tobs), 
+                            func.maxi(measurement.tobs), 
+                            func.mini(measurement.tobs)).\
+                            filter(measurement.date >= start).filter(measurement.date <= end).all()
+    
+    session.close()
+
+    # Create a dictionary from the row data and append to a list of all_passengers
+    all_start_end = []
+    for avg, maxi, mini in results:
+        start_end_dict = {}
+        start_end_dict["avg"] = avg
+        start_end_dict["maxi"] = maxi
+        start_end_dict["mini"] = mini
+        all_start_end.append(start_dict)
+
+    return jsonify(all_start_end)
 
 if __name__ == '__main__':
     app.run(debug=True)
